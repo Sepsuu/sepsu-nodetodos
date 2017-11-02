@@ -10,7 +10,8 @@ const todos = [{
     text: "Test todo"
 },{
     _id: new ObjectID(),
-    text: "Another test todo"
+    text: "Another test todo",
+    completedAt: 333
 }];
 
 // before testcase removeAll from db n add some dummydata
@@ -144,5 +145,46 @@ describe('delete todo', () => {
             .delete('/todos/123asd')
             .expect(404)
             .end(done)
+    });
+});
+
+describe('PATCH /todos/:id', () => {
+    it('Should update the todo', (done) => {
+        var id = todos[0]._id.toHexString();
+        var text = 'This is a new text';
+
+        request(app)
+            .patch(`/todos/${id}`)
+            .send({
+                completed: true,
+                text: text
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(text);
+                expect(res.body.todo.completed).toBe(true);
+
+            })
+            .end(done);
+    });
+
+    it('Clear compltetedAt when not completed', (done) => {
+        var id = todos[1]._id.toHexString();
+        var text = 'This is a new text123!!';
+        
+                request(app)
+                    .patch(`/todos/${id}`)
+                    .send({
+                        completed: false,
+                        text
+                    })
+                    .expect(200)
+                    .expect((res) => {
+                        expect(res.body.todo.text).toBe(text);
+                        expect(res.body.todo.completed).toBe(false);
+                        expect(res.body.todo.completedAt).toBe(null);
+        
+                    })
+                    .end(done);
     });
 });
