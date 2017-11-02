@@ -163,6 +163,7 @@ describe('PATCH /todos/:id', () => {
             .expect((res) => {
                 expect(res.body.todo.text).toBe(text);
                 expect(res.body.todo.completed).toBe(true);
+                // expect to be a number ei toimi fuufuu
 
             })
             .end(done);
